@@ -87,7 +87,7 @@ public class SolutionTest {
         
         assertEquals(true, checkingAccount.deposit(500.0));
     }
-
+    
     @Test
     public void testDepositNegativeAmountInCheckingAccount() throws ExceedsCombinedBalanceLimitException, NegativeAmountException, ExceedsFraudSuspicionLimitException{
     	AccountHolder accountHolder = new AccountHolder(
@@ -149,7 +149,6 @@ public class SolutionTest {
             	"123456789");
     	
     	SavingsAccount savingsAccount = accountHolder.addSavingsAccount(50);
-        
         assertEquals(false, savingsAccount.withdraw(500.0));
     }
     
@@ -333,6 +332,8 @@ public class SolutionTest {
     	CDAccount.readFromString("a,1000,0.00015,01/01/2020,5");
     }
     
+    
+    
     @Test
     public void testSuccessfullyReadFromFile() {
     	 	
@@ -426,4 +427,5 @@ public class SolutionTest {
         assertEquals(300, savingsAccount.getBalance(), 0);
     	
     }  
+    
 }
