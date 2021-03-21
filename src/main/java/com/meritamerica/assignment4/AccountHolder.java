@@ -3,24 +3,12 @@ package com.meritamerica.assignment4;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
 
-
-
-public class AccountHolder {
-	private String firstName;
-	private String middleName;
-	private String lastName;
-	private String ssn;
-	
-	private ArrayList <CheckingAccount> checkingAccounts = new ArrayList<CheckingAccount>();;
-	private ArrayList <SavingsAccount> savingsAccounts = new ArrayList<SavingsAccount>();;
-	private ArrayList<CDAccount>cdAccounts = new ArrayList<CDAccount>();;
-	
+public class AccountHolder implements Comparable<AccountHolder> {
 	public  AccountHolder(String firstName, String middleName, String lastName, String ssn) {
 		 this.firstName = firstName;
 		 this.middleName = middleName;
 		 this.lastName = lastName;
 		 this.ssn = ssn;
-		 
 	}
 	public String getFirstName() {
 		return this.firstName;
@@ -46,35 +34,53 @@ public class AccountHolder {
 	public void setSSN(String ssn) {
 		this.ssn = ssn;
 	}
-	
-	public CheckingAccount addCheckingAccount(double openingBalance) throws ExceedsCombinedBalanceLimitException
- {
+	public CheckingAccount addCheckingAccount(double openingBalance) throws ExceedsCombinedBalanceLimitException{
 		CheckingAccount checking=null;
+		//DepositTransaction depositTransact = null;
 		if((getSavingsBalance()+getCheckingBalance()+openingBalance)<250000) {
-			checking = new CheckingAccount(openingBalance);
-			this.checkingAccounts.add(checking);
-		}else {
-			throw new ExceedsCombinedBalanceLimitException("Combined balance exceeded");
+			checking= new CheckingAccount(0);
+			this.checkingAccList.add(checking);
+			/*depositTransact = new DepositTransaction(checking,openingBalance);
+			try{
+				depositTransact.process();
+			} catch (NegativeAmountException e) {
+				System.out.println("Negative amount entered: invalid");
+			}catch( ExceedsFraudSuspicionLimitException e) {
+				System.out.println("Entered amount exceeds Fraud Suspicion limit");
+			}*/
+			checking.deposit(openingBalance);
+		} else {
+			ExceedsCombinedBalanceLimitException exceedsCombinedBal=new ExceedsCombinedBalanceLimitException();
+			throw exceedsCombinedBal;
 		}
 		return checking;
 	}
-	
-	public CheckingAccount addCheckingAccount(CheckingAccount checkingAccount) {
+	public CheckingAccount addCheckingAccount(CheckingAccount checkingAccount) throws ExceedsCombinedBalanceLimitException{
+		DepositTransaction depositTransact = null;
 		if((getSavingsBalance()+getCheckingBalance()+checkingAccount.getBalance())<250000) {
-			this.checkingAccounts.add(checkingAccount);
+			this.checkingAccList.add(checkingAccount);
+			depositTransact = new DepositTransaction(checkingAccount,checkingAccount.getBalance());
+			try{
+				depositTransact.process();
+			} catch (NegativeAmountException e) {
+				System.out.println("Negative amount entered: invalid");
+			}catch( ExceedsFraudSuspicionLimitException e) {
+				System.out.println("Entered amount exceeds Fraud Suspicion limit");
+			}
 			return checkingAccount;
 		} else {
-			return null;
+			ExceedsCombinedBalanceLimitException exceedsCombinedBal=new ExceedsCombinedBalanceLimitException();
+			throw exceedsCombinedBal;
 		}
 	}
 	public CheckingAccount[] getCheckingAccounts() {
-		CheckingAccount[] checking = checkingAccounts.toArray(new CheckingAccount[0]);
+		CheckingAccount[] checking = checkingAccList.toArray(new CheckingAccount[0]);
 		return checking;
 	}
 	
 	//directly the size of arraylist is calculated.
 	public int getNumberOfCheckingAccounts() {
-		int numberOfCheckingAccounts = checkingAccounts.size();
+		int numberOfCheckingAccounts = checkingAccList.size();
 		return numberOfCheckingAccounts;
 	}
 	
@@ -90,26 +96,51 @@ public class AccountHolder {
 		return checkingTotal;
 	}
 	
-	public SavingsAccount addSavingsAccount(double openingBalance){
+	//add a new savings account with a given opening balance if combined balance is less than $250,000
+	public SavingsAccount addSavingsAccount(double openingBalance) throws ExceedsCombinedBalanceLimitException {
 		SavingsAccount savings = null;
+		DepositTransaction depositTransact = null;
 		if((getSavingsBalance()+getCheckingBalance()+openingBalance)<250000) {
-			savings=new SavingsAccount(openingBalance);
-			this.savingsAccounts.add(savings);
+			savings=new SavingsAccount(0);
+			this.savingsAccList.add(savings);
+			/*depositTransact = new DepositTransaction(savings,openingBalance);
+			try{
+				depositTransact.process();
+			} catch (NegativeAmountException e) {
+				System.out.println("Negative amount entered: invalid");
+			}catch( ExceedsFraudSuspicionLimitException e) {
+				System.out.println("Entered amount exceeds Fraud Suspicion limit");
+			}*/
+			savings.deposit(openingBalance);
+		} else {
+			ExceedsCombinedBalanceLimitException exceedsCombinedBal=new ExceedsCombinedBalanceLimitException();
+			throw exceedsCombinedBal;
 		}
 		return savings;
 	}
 	
-	public SavingsAccount addSavingsAccount(SavingsAccount savingsAccount)  {
+	//add a new savings account if combined balance is less than $250,000
+	public SavingsAccount addSavingsAccount(SavingsAccount savingsAccount) throws ExceedsCombinedBalanceLimitException {
+		DepositTransaction depositTransact = null;
 		if((getSavingsBalance()+getCheckingBalance()+savingsAccount.getBalance())<250000) {
-			this.savingsAccounts.add(savingsAccount);
-			return savingsAccount;						                          //returning savingsAccount as the return type expected is object. 
+			this.savingsAccList.add(savingsAccount);
+			depositTransact = new DepositTransaction(savingsAccount,savingsAccount.getBalance());
+			try{
+				depositTransact.process();
+			} catch (NegativeAmountException e) {
+				System.out.println("Negative amount entered: invalid");
+			}catch( ExceedsFraudSuspicionLimitException e) {
+				System.out.println("Entered amount exceeds Fraud Suspicion limit");
+			}
+			return savingsAccount;						              //returning savingsAccount as the return type expected is object. 
 		} else {
-			return null;
+			ExceedsCombinedBalanceLimitException exceedsCombinedBal=new ExceedsCombinedBalanceLimitException();
+			throw exceedsCombinedBal;
 		}
 	}
 	
 	public SavingsAccount[] getSavingsAccounts() {
-		SavingsAccount[] savings = savingsAccounts.toArray(new SavingsAccount[0]); //converting to array since, return type, an array is expected.
+		SavingsAccount[] savings = savingsAccList.toArray(new SavingsAccount[0]); //converting to array since, return type, an array is expected.
 		return savings;
 	}
 	
@@ -125,29 +156,42 @@ public class AccountHolder {
 		for(int i=0;i<savingArr.length;i++) {
 			savingsTotal+= (savingArr[i].getBalance());
 		}
-		
 		return savingsTotal;
 	}
 	
- public CDAccount addCDAccount(CDOffering offering, double openingBalance) {
+	public CDAccount addCDAccount(CDOffering offering, double openingBalance) throws ExceedsFraudSuspicionLimitException {
 		
 		CDAccount cd=new CDAccount(offering,openingBalance);
-		this.cdAccounts.add(cd);
+		this.cdAccList.add(cd);
+		DepositTransaction depositTransact = new DepositTransaction(cd,openingBalance);
+		try{
+			depositTransact.process();
+		} catch (NegativeAmountException e) {
+			System.out.println("Negative amount entered: invalid");
+		}
 		return cd;
 	}
- 
- public CDAccount addCDAccount(CDAccount cdAccount) {
-		this.cdAccounts.add(cdAccount);
+	
+	public CDAccount addCDAccount(CDAccount cdAccount) {
+		this.cdAccList.add(cdAccount);
+		DepositTransaction depositTransact = new DepositTransaction(cdAccount,cdAccount.getBalance());
+		try{
+			depositTransact.process();
+		} catch (NegativeAmountException e) {
+			System.out.println("Negative amount entered: invalid");
+		}catch( ExceedsFraudSuspicionLimitException e) {
+			System.out.println("Entered amount exceeds Fraud Suspicion limit");
+		}
 		return cdAccount;
 	}
 	
 	public CDAccount[] getCDAccounts() {
-		CDAccount[] cd = cdAccounts.toArray(new CDAccount[0]);
+		CDAccount[] cd = cdAccList.toArray(new CDAccount[0]);
 		return cd;
 	}
 	
 	public int getNumberOfCDAccounts() {
-		int numberOfCDAccounts= cdAccounts.size();
+		int numberOfCDAccounts= cdAccList.size();
 		return numberOfCDAccounts;
 	}
 	
@@ -193,4 +237,13 @@ public class AccountHolder {
 		return acString;
 	}
 
+	private String firstName;
+	private String middleName;
+	private String lastName;
+	private String ssn;
+	
+	//ArrayList is created for storing (1) all the savings account,(2) all the checking account,(3)all CDA account of an account holder
+	private ArrayList<SavingsAccount> savingsAccList = new ArrayList<SavingsAccount>();
+	private ArrayList<CheckingAccount> checkingAccList = new ArrayList<CheckingAccount>();
+	private ArrayList<CDAccount> cdAccList = new ArrayList<CDAccount>();
 }

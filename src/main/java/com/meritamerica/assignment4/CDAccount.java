@@ -6,19 +6,15 @@ import java.util.Date;
 import java.util.StringTokenizer;
 
 public class CDAccount extends BankAccount {
-	private CDOffering offering;
 	
-public CDAccount(CDOffering offering, double balance) {
-		
+	public CDAccount(CDOffering offering, double balance) {
 		super(MeritBank.getNextAccountNumber(), balance,offering.getInterestRate(),new Date());
-		
 		this.offering=offering;
 	}
-	public CDAccount(int accountNumber, double balance, double interestRate,java.util.Date accountOpenedOn,int term) {
+	
+	public CDAccount(long accountNumber, double balance, double interestRate,java.util.Date accountOpenedOn,int term) {
 		super(accountNumber,balance,interestRate,accountOpenedOn);
-		
-		this.offering = new CDOffering(term, interestRate);
-		
+		this.offering = new CDOffering(term, interestRate);	
 	}
 	
 	public double getInterestRate() {
@@ -38,14 +34,10 @@ public CDAccount(CDOffering offering, double balance) {
 		return false;
 	}
 	public double futureValue() {
-		
-		double futureVal = getBalance() * Math.pow((1+this.getInterestRate()),this.getTerm());
-		return futureVal;
+			double futureVal=MeritBank.recursiveFutureValue(super.getBalance(), this.getTerm(),this.getInterestRate());
+			return futureVal;
 	}
 	
-	private void recurFutureValue() {
-		
-	}
 	public static CDAccount readFromString(String accountData) throws  java.lang.NumberFormatException{
 		StringTokenizer token = new StringTokenizer(accountData, ",");
 		int numAccount = Integer.parseInt(token.nextToken());
@@ -62,9 +54,12 @@ public CDAccount(CDOffering offering, double balance) {
 		CDAccount cdAcc = new CDAccount(numAccount, balance, rate, date, term);
 		return cdAcc;
 	}
+	
 	public String writeToString() {
 		String cdString = getAccountNumber()+","+getBalance()+","+getInterestRate()+","+getStartDate()+","+getTerm(); 
 		return cdString;
 	}
+		
+	private CDOffering offering;
 
 }

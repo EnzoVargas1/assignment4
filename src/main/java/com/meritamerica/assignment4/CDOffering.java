@@ -1,10 +1,6 @@
 package com.meritamerica.assignment4;
 
 public class CDOffering {
-	
-	private int term;
-	private double interestRate;
-	
 	public CDOffering(int term, double interestRate) {
 		this.term = term;
 		this.interestRate = interestRate;
@@ -22,7 +18,7 @@ public class CDOffering {
 		//expecting like this: 1,0.018
 		CDOffering cd = null;
 
-		if(cdOfferingDataString.indexOf(',')!=-1) {
+		if(cdOfferingDataString.indexOf(',')!=-1) { //if there's no ',' in the string, the string is considered as NumberFormatException
 			int term = Integer.parseInt(cdOfferingDataString.substring(0, cdOfferingDataString.indexOf(',')));  
 			double rate = Double.parseDouble(cdOfferingDataString.substring(cdOfferingDataString.indexOf(',')+1));
 			cd = new CDOffering(term,rate);
@@ -39,5 +35,7 @@ public class CDOffering {
 		return cdString;
 	}
 
+	private int term;
+	private double interestRate;
 
 }

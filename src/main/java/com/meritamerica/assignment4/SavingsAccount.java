@@ -10,12 +10,9 @@ public class SavingsAccount extends BankAccount {
 	public SavingsAccount(double balance) {
 		super(balance, SAVINGS_INTERESTRATE);
 	}
-	
-	public SavingsAccount(int numAccount, double balance, double rate, Date date) {
-		// TODO Auto-generated constructor stub
-		super(numAccount, balance, rate, date);
+	public SavingsAccount(long accountNumber, double balance, double interestRate,java.util.Date accountOpenedOn) {
+		super(accountNumber,balance,interestRate,accountOpenedOn);
 	}
-
 	public static SavingsAccount readFromString(String accountData) throws java.lang.NumberFormatException{
 		StringTokenizer token = new StringTokenizer(accountData, ",");
 		int numAccount = Integer.parseInt(token.nextToken());
@@ -30,7 +27,5 @@ public class SavingsAccount extends BankAccount {
 		SavingsAccount savings = new SavingsAccount(numAccount, balance, rate, date);
 		return savings;
 	}
-	
-	public static final double SAVINGS_INTERESTRATE= 0.01;
-
+	public static final double SAVINGS_INTERESTRATE = 0.01;
 }
